@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="COEN346.PA2/Assignment 2. Files"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
