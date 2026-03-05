@@ -56,11 +56,7 @@ public class Monitor
 				State[piTID] = philosopherState.eating;
 		}
 	}
-	
-	private void test_talking(int piTID) {
-		if ()
-	}
-	
+
 
 	/**
 	 * Grants request (returns) to eat when both chopsticks/forks are available.
