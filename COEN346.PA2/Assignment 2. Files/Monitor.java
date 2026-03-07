@@ -6,17 +6,11 @@
  */
 public class Monitor
 {
-	
 	/*
 	 * ------------
 	 * Data members
 	 * ------------
 	 */
-	
-	private int philosopherNumber;
-	private enum philosopherState{thinking, eating, talking, hungry};
-	private philosopherState[] State;
-	private boolean talking = false;
 
 
 	/**
@@ -25,38 +19,14 @@ public class Monitor
 	public Monitor(int piNumberOfPhilosophers)
 	{
 		// TODO: set appropriate number of chopsticks based on the # of philosophers
-		philosopherNumber = piNumberOfPhilosophers;
-		State = new philosopherState[philosopherNumber];
-		for (int i = 0; i <philosopherNumber; i++) {
-			State[i] = philosopherState.thinking;
-		}
 	}
 
-	/*
+	/*\\
 	 * -------------------------------
 	 * User-defined monitor procedures
 	 * You may need to add more procedures for task 5
 	 * -------------------------------
 	 */
-	
-	private int left(int i)
-	{
-	    return (i + philosopherNumber - 1) % philosopherNumber;
-	}
-
-	private int right(int i)
-	{
-	    return (i + 1) % philosopherNumber;
-	}
-	
-	private void test(int piTID) {
-			if (State[left(piTID)] != philosopherState.eating
-					&& State[right(piTID)] != philosopherState.eating
-					&& State[piTID] == philosopherState.hungry) {
-				State[piTID] = philosopherState.eating;
-		}
-	}
-
 
 	/**
 	 * Grants request (returns) to eat when both chopsticks/forks are available.
@@ -64,18 +34,7 @@ public class Monitor
 	 */
 	public synchronized void pickUp(final int piTID)
 	{
-		State[piTID] = philosopherState.hungry;
-		
-		test(piTID);
-		
-		if (State[piTID] != philosopherState.eating) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		
+		// ...
 	}
 
 	/**
@@ -84,10 +43,7 @@ public class Monitor
 	 */
 	public synchronized void putDown(final int piTID)
 	{
-		State[piTID] = philosopherState.thinking;
-		test(left(piTID));
-		test(right(piTID));
-		
+		// ...
 	}
 
 	/**
@@ -96,15 +52,7 @@ public class Monitor
 	 */
 	public synchronized void requestTalk(int id)
 	{
-		if (talking){
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		talking = true;
-		State[id] = philosopherState.talking;
+		// ...
 	}
 
 	/**
@@ -113,9 +61,7 @@ public class Monitor
 	 */
 	public synchronized void endTalk(int id)
 	{
-		State[id] = philosopherState.thinking;
-		talking = false;
-		notifyAll();
+		// ...
 	}
 }
 

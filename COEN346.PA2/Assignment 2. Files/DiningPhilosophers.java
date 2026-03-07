@@ -1,9 +1,4 @@
-/**
- * Class DiningPhilosophers
- * The main starter.
- *
- * @author Serguei A. Mokhov, mokhov@cs.concordia.ca
- */
+import java.util.Scanner;
 public class DiningPhilosophers
 {
 	/*
@@ -46,17 +41,30 @@ public class DiningPhilosophers
 			 * Should be settable from the command line
 			 * or the default if no arguments supplied.
 			 */
-			int iPhilosophers = DEFAULT_NUMBER_OF_PHILOSOPHERS;
+			
+			Scanner scanner = new Scanner(System.in);
+			int iPhilosophers;
+
+			while(true){
+				System.out.print("Enter number of philosophers: ");
+				iPhilosophers = scanner.nextInt();
+
+				if(iPhilosophers >= 3){
+					break;
+				}
+				else{
+					System.out.println("Number of philosophers must be at least 3. Please try again.");
+				}
+			}
 
 			// Make the monitor aware of how many philosophers there are
 			soMonitor = new Monitor(iPhilosophers);
 
-			// Space for all the philosophers
+			// array of philosopher threads
 			Philosopher aoPhilosophers[] = new Philosopher[iPhilosophers];
 
-			// Let 'em sit down
-			for(int j = 0; j < iPhilosophers; j++)
-			{
+			// Add them to the table and start them up
+			for(int j = 0; j < iPhilosophers; j++){
 				aoPhilosophers[j] = new Philosopher();
 				aoPhilosophers[j].start();
 			}
