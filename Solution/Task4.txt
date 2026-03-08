@@ -1,4 +1,4 @@
-Dynamic philosopher modification is theoretically possible but with a large amount of changes to the current monitor.
+Dynamic philosopher modification is theoretically possible but with a large amount of changes to the current monitor's code.
 All activity would need to be paused to remove and add a philosopher, the length State array would need to be updated at every change.
 This would constantly change the relationship between certain philosophers especially since the method used to connect them is through their thread ID.
 A way would need to be found to perfectly synchronize the threads and update the relationship of the neighbors from (i+1)%n to another method.

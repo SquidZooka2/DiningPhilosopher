@@ -1,14 +1,11 @@
 import common.BaseThread;
 
-
 public class Philosopher extends BaseThread
 {
 	/**
 	 * Max time an action can take (in milliseconds)
 	 */
 	public static final long TIME_TO_WASTE = 1000;
-
-	
 
 	/**
 	 * The act of eating.
@@ -23,13 +20,12 @@ public class Philosopher extends BaseThread
     {
         System.out.println("Philosopher " + getTID() + " has started eating.");
         
-        Thread.yield(); // letting thread scheduler know that the current thread is willing to pause its execution temporarily to allow other threads to execute.
+        Thread.yield();
         
         sleep((long)(Math.random() * TIME_TO_WASTE));
         
         Thread.yield();
-        
-        System.out.println("Philosopher " + getTID() + " has finished eating.");
+
     }
     catch(InterruptedException e)
     {
@@ -51,6 +47,8 @@ public class Philosopher extends BaseThread
 {
     try
     {
+		System.out.println("Philosopher " + getTID() + " has finished eating.");
+		
         System.out.println("Philosopher " + getTID() + " has started thinking.");
         
         Thread.yield();
@@ -108,7 +106,7 @@ public class Philosopher extends BaseThread
 	 * - The print that they are done using the pepper shaker.
 	 */
 
-	public synchronized void use_PS() 
+	public void use_PS() 
 {
 	try{
 		System.out.println("Philosopher " + getTID() + " is using the pepper shaker.");
@@ -125,7 +123,7 @@ public class Philosopher extends BaseThread
 	}
 }
 
-	public synchronized void release_PS()
+	public void release_PS()
 {
         System.out.println("Philosopher " + getTID() + " has finished using the pepper shaker.");
 }
@@ -147,6 +145,7 @@ public class Philosopher extends BaseThread
 
 			DiningPhilosophers.soMonitor.putdown_pepper_shaker(getTID());
 
+			release_PS();
 
 			DiningPhilosophers.soMonitor.putDown(getTID());
 
