@@ -13,9 +13,10 @@ public class Monitor
 	 */
 	private int philosopherNumber;
 	private enum philosopherState{thinking, eating, talking, hungry};
+	private enum usingShaker{usingShaker1, usingShaker2, notUsingShaker};
 	private philosopherState[] State;
+	private usingShaker[] shaker;
 	private boolean talking = false;
-	private int pepperShaker;
 	private int[] pepperShakerStates = {0, 0}; // 0 = available, 1 = in use
 
 	/**
@@ -26,8 +27,12 @@ public class Monitor
 		// TODO: set appropriate number of chopsticks based on the # of philosophers
 		philosopherNumber = piNumberOfPhilosophers;
 		State = new philosopherState[philosopherNumber];
+		shaker = new usingShaker[philosopherNumber];
 		for (int i = 0; i <philosopherNumber; i++) {
 			State[i] = philosopherState.thinking;
+		}
+		for (int i = 0; i <philosopherNumber; i++) {
+			shaker[i] = usingShaker.notUsingShaker;
 		}
 	}
 
@@ -60,22 +65,36 @@ public class Monitor
 
 	public synchronized void use_pepper_shaker(int piTID) {
 		// if you are eating and you want to use the pepper shaker, you can only use it if it is available. Check PS0 and PS1.
-		if(State[piTID] == philosopherState.eating && pepperShakerStates[0] == 0) {
+		if(shaker[piTID] == usingShaker.notUsingShaker && pepperShakerStates[0] == 0 && State[piTID] == philosopherState.eating) {
 			pepperShakerStates[0] = 1; // set the pepper shaker to in use
+			shaker[piTID] = usingShaker.usingShaker1;
 		}
-		else if(State[piTID] == philosopherState.eating && pepperShakerStates[1] == 0) {
+		if(shaker[piTID] == usingShaker.notUsingShaker && pepperShakerStates[1] == 0 && State[piTID] == philosopherState.eating) {
 			pepperShakerStates[1] = 1; // set the pepper shaker to in use
+			shaker[piTID] = usingShaker.usingShaker2;
+		}
+
+		while (shaker[piTID] == usingShaker.notUsingShaker) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	public synchronized void putdown_pepper_shaker(int piTID) {
 		// if you are eating and you want to use the pepper shaker, you can only use it if it is available. Check PS0 and PS1.
-		if(State[piTID] == philosopherState.eating && pepperShakerStates[0] == 1) {
+		if(shaker[piTID] == usingShaker.usingShaker1) {
 			pepperShakerStates[0] = 0; // set the pepper shaker to available
+			shaker[piTID] = usingShaker.notUsingShaker;
 		}
-		else if(State[piTID] == philosopherState.eating && pepperShakerStates[1] == 1) {
+		else if(shaker[piTID] == usingShaker.usingShaker2) {
 			pepperShakerStates[1] = 0; // set the pepper shaker to available
+			shaker[piTID] = usingShaker.notUsingShaker;
 		}
+		notifyAll();
+
 	}
 	
 
