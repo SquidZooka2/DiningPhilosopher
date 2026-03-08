@@ -1,11 +1,6 @@
 import common.BaseThread;
 
-/**
- * Class Philosopher.
- * Outlines main subrutines of our virtual philosopher.
- *
- * @author Serguei A. Mokhov, mokhov@cs.concordia.ca
- */
+
 public class Philosopher extends BaseThread
 {
 	/**
@@ -23,15 +18,12 @@ public class Philosopher extends BaseThread
 	 * - yield
 	 * - The print that they are done eating.
 	 */
-
-	
-	
 	public void eat(){
     try
     {
         System.out.println("Philosopher " + getTID() + " has started eating.");
         
-        Thread.yield();
+        Thread.yield(); // letting thread scheduler know that the current thread is willing to pause its execution temporarily to allow other threads to execute.
         
         sleep((long)(Math.random() * TIME_TO_WASTE));
         
@@ -108,6 +100,37 @@ public class Philosopher extends BaseThread
 }
 
 	/**
+	 * The act of using the pepper shaker.
+	 * - Print the fact an eating philosopher is using the pepper shaker.
+	 * - yield
+	 * - sleep()
+	 * - yield
+	 * - The print that they are done using the pepper shaker.
+	 */
+
+	public synchronized void use_PS() 
+{
+	try{
+		System.out.println("Philosopher " + getTID() + " is using the pepper shaker.");
+
+		Thread.yield();
+        
+        sleep((long)(Math.random() * TIME_TO_WASTE));
+	}
+	catch(InterruptedException e)
+	{
+		System.err.println("Philosopher.use_pepper_shaker():");
+		DiningPhilosophers.reportException(e);
+		System.exit(1);
+	}
+}
+
+	public synchronized void release_PS()
+{
+        System.out.println("Philosopher " + getTID() + " has finished using the pepper shaker.");
+}
+
+	/**
 	 * No, this is not the act of running, just the overridden Thread.run()
 	 */
 	public void run()
@@ -117,6 +140,13 @@ public class Philosopher extends BaseThread
 			DiningPhilosophers.soMonitor.pickUp(getTID());
 
 			eat();
+
+			DiningPhilosophers.soMonitor.use_pepper_shaker(getTID());
+
+			use_PS();
+
+			DiningPhilosophers.soMonitor.putdown_pepper_shaker(getTID());
+
 
 			DiningPhilosophers.soMonitor.putDown(getTID());
 

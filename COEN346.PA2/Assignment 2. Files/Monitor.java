@@ -15,6 +15,8 @@ public class Monitor
 	private enum philosopherState{thinking, eating, talking, hungry};
 	private philosopherState[] State;
 	private boolean talking = false;
+	private int pepperShaker;
+	private int[] pepperShakerStates = {0, 0}; // 0 = available, 1 = in use
 
 	/**
 	 * Constructor
@@ -53,6 +55,28 @@ public class Monitor
 				State[piTID] = philosopherState.eating;
 		}
 	}
+
+	// synchronized method to use the pepper shaker.
+
+	public synchronized void use_pepper_shaker(int piTID) {
+		// if you are eating and you want to use the pepper shaker, you can only use it if it is available. Check PS0 and PS1.
+		if(State[piTID] == philosopherState.eating && pepperShakerStates[0] == 0) {
+			pepperShakerStates[0] = 1; // set the pepper shaker to in use
+		}
+		else if(State[piTID] == philosopherState.eating && pepperShakerStates[1] == 0) {
+			pepperShakerStates[1] = 1; // set the pepper shaker to in use
+		}
+	}
+
+	public synchronized void putdown_pepper_shaker(int piTID) {
+		// if you are eating and you want to use the pepper shaker, you can only use it if it is available. Check PS0 and PS1.
+		if(State[piTID] == philosopherState.eating && pepperShakerStates[0] == 1) {
+			pepperShakerStates[0] = 0; // set the pepper shaker to available
+		}
+		else if(State[piTID] == philosopherState.eating && pepperShakerStates[1] == 1) {
+			pepperShakerStates[1] = 0; // set the pepper shaker to available
+		}
+	}
 	
 
 	/**
@@ -61,19 +85,19 @@ public class Monitor
 	 */
 	public synchronized void pickUp(final int piTID)
 	{
-		// ...
-		State[piTID] = philosopherState.hungry;
+		// when a philosopher wants to eat, set their state to hungry and check if they can eat (if both neighbors are not eating)
+		State[piTID] = philosopherState.hungry; // set the philosopher's state to hungry 
 		
-		test(piTID);
+		test(piTID); // check if the philosopher can eat (if both neighbors are not eating)
 		
-		if (State[piTID] != philosopherState.eating) {
+		// if the philosopher cannot eat, they will wait until they are notified that they can eat
+		while (State[piTID] != philosopherState.eating) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		
 	}
 
 	/**
@@ -82,7 +106,8 @@ public class Monitor
 	 */
 	public synchronized void putDown(final int piTID)
 	{
-		// ...
+		// current philosopher is done eating, so set their state to thinking. 
+		// Then, check if the left and right neighbors can eat now that the current philosopher is done eating.
 		State[piTID] = philosopherState.thinking;
 		test(left(piTID));
 		test(right(piTID));
@@ -95,7 +120,7 @@ public class Monitor
 	 */
 	public synchronized void requestTalk(int id)
 	{
-		// ...
+		// if someone else is talking, wait else -> talk
 		if (talking){
 			try {
 				wait();
@@ -113,7 +138,7 @@ public class Monitor
 	 */
 	public synchronized void endTalk(int id)
 	{
-		// ...
+		// when done talking, set state to thinking and notify all waiting philosophers that they can talk now.
 		State[id] = philosopherState.thinking;
 		talking = false;
 		notifyAll();
